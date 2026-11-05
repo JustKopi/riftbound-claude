@@ -25,11 +25,9 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Refresh card data and Cardmarket prices
-        if: github.event_name != 'push'
         run: python3 scripts/build_data.py collection.json
 
       - name: Commit updated data.js
-        if: github.event_name != 'push'
         run: |
           if git diff --quiet -- data.js; then echo "No price changes."; exit 0; fi
           git config user.name "github-actions[bot]"

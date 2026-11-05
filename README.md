@@ -22,4 +22,4 @@ python3 scripts/build_data.py collection.json
 git commit -am "Gyűjtemény frissítése" && git push
 ```
 
-Ha csak a `collection.json`-t cseréled, a következő napi futás akkor is újragenerálja az oldalt. Azonnal az Actions fülön a „Run workflow” gombbal indítható.
+Elég csak a `collection.json`-t lecserélni és pusholni: a workflow minden pushnál és naponta újragenerálja a `data.js`-t. (A bot saját commitja nem indít újabb futást.)
