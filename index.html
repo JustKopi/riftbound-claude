@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Riftbound gyűjtemény – Vendetta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap">
+<style>
+  :root {
+    --bg:#090c10; --panel:#11171d; --panel2:#151c23; --line:#232c35; --line2:#2d3843;
+    --ink:#eef1f4; --muted:#8c97a3; --dim:#5d6873; --gold:#d9b26a; --gold-dim:#8a7142; --foil:#b9a2f0;
+    --fury:#e0524a; --calm:#4fb07a; --mind:#4f8fe0; --body:#e48a3c; --chaos:#a55ee0; --order:#e0c34f;
+  }
+  * { box-sizing:border-box; }
+  [hidden] { display:none !important; }
+  html { background:var(--bg); }
+  body { margin:0; font:14px/1.5 Inter,system-ui,-apple-system,"Segoe UI",sans-serif; color:var(--ink);
+    background:radial-gradient(1200px 500px at 85% -10%, rgba(217,178,106,.08), transparent 60%), var(--bg); min-height:100vh; }
+  .wrap { max-width:1140px; margin:0 auto; padding:0 20px 60px; }
+  header { position:relative; padding:44px 0 26px; overflow:hidden; }
+  header .eyebrow { color:var(--gold); font-size:12px; letter-spacing:.22em; text-transform:uppercase; font-weight:600; }
+  header h1 { font:600 38px/1.15 "Source Serif 4",Georgia,serif; margin:8px 0 10px; }
+  header p { margin:0; color:var(--muted); max-width:460px; }
+  header .gem { position:absolute; right:30px; top:-70px; width:170px; height:170px; transform:rotate(45deg);
+    border:1px solid var(--gold-dim); background:linear-gradient(135deg, rgba(217,178,106,.12), transparent 70%); pointer-events:none; }
+  header .gem::after { content:""; position:absolute; inset:22px; border:1px solid rgba(217,178,106,.25); }
+  .src { margin-top:12px; font-size:12px; color:var(--dim); }
+  .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin:6px 0 24px; }
+  .stat { background:linear-gradient(180deg,var(--panel2),var(--panel)); border:1px solid var(--line); border-radius:12px; padding:20px 20px 16px; }
+  .stat b { display:block; font-size:24px; font-weight:700; font-variant-numeric:tabular-nums; letter-spacing:-.01em; }
+  .stat span { display:block; margin-top:6px; color:var(--muted); font-size:12px; }
+  .stat.gold b { color:var(--gold); }
+  .controls { display:grid; grid-template-columns:1fr repeat(4, auto); gap:10px; }
+  input[type=search], select, .btn { font:inherit; font-size:13px; height:42px; padding:0 14px; border:1px solid var(--line2); border-radius:9px;
+    background:var(--panel); color:var(--ink); }
+  select { padding-right:34px; appearance:none; cursor:pointer; font-weight:500;
+    background:var(--panel) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23eef1f4' stroke-width='1.6' fill='none'/%3E%3C/svg%3E") no-repeat right 13px center; }
+  input[type=search]::placeholder { color:var(--dim); }
+  input:focus, select:focus, .btn:focus-visible { outline:none; border-color:var(--gold-dim); box-shadow:0 0 0 3px rgba(217,178,106,.12); }
+  .bar { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin:16px 0 12px; }
+  .bar .summary { color:var(--muted); font-size:12px; margin-right:auto; }
+  .btn { height:36px; padding:0 13px; display:inline-flex; align-items:center; gap:6px; cursor:pointer; font-weight:500; font-size:12px; }
+  .btn:hover { border-color:var(--gold-dim); }
+  .btn.on { border-color:var(--gold); color:var(--gold); background:rgba(217,178,106,.06); }
+  .note { font-size:12px; color:var(--muted); }
+  /* Lista */
+  .tablewrap { border:1px solid var(--line); border-radius:12px; overflow:auto; background:var(--panel); }
+  table { width:100%; border-collapse:collapse; min-width:820px; }
+  th { text-align:left; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:600; padding:16px; border-bottom:1px solid var(--line); cursor:pointer; user-select:none; white-space:nowrap; }
+  th.sorted { color:var(--gold); }
+  td { padding:12px 16px; border-bottom:1px solid var(--line); font-variant-numeric:tabular-nums; }
+  tbody tr { cursor:pointer; transition:background .12s; }
+  tbody tr:hover { background:rgba(255,255,255,.025); }
+  tbody tr:last-child td { border-bottom:0; }
+  tr.notowned { opacity:.45; }
+  .cardcell { display:flex; align-items:center; gap:14px; }
+  .cardcell img, .cardcell .ph { width:30px; height:42px; border-radius:3px; object-fit:cover; flex:none; background:var(--panel2); }
+  .cardcell .n { font-weight:600; }
+  .cardcell .m { font-size:11px; color:var(--muted); }
+  .foilc { color:var(--foil); }
+  .zero { color:var(--dim); }
+  .mk { color:var(--gold); text-decoration:none; font-size:15px; }
+  /* Képek */
+  .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(170px,1fr)); gap:16px; }
+  .tile { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:10px; cursor:pointer; transition:transform .12s, border-color .12s; position:relative; }
+  .tile:hover { transform:translateY(-2px); border-color:var(--gold-dim); }
+  .tile img, .tile .ph { width:100%; aspect-ratio:744/1039; border-radius:7px; object-fit:cover; display:block; background:var(--panel2); }
+  .tile .n { font-weight:600; font-size:13px; margin-top:9px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .tile .m { display:flex; justify-content:space-between; gap:6px; white-space:nowrap; font-size:11px; color:var(--muted); margin-top:2px; }
+  .tile .qty { position:absolute; top:16px; right:16px; display:flex; gap:4px; }
+  .pill { font-size:11px; font-weight:700; padding:2px 7px; border-radius:20px; background:rgba(9,12,16,.85); border:1px solid var(--line2); }
+  .pill.f { color:var(--foil); border-color:rgba(185,162,240,.4); }
+  .tile.notowned { opacity:.4; }
+  /* Részletek */
+  dialog { border:1px solid var(--line2); border-radius:16px; background:var(--panel); color:var(--ink); padding:22px; width:min(700px, calc(100vw - 24px)); max-height:calc(100vh - 24px); }
+  dialog::backdrop { background:rgba(3,5,8,.72); backdrop-filter:blur(3px); }
+  .dlg { display:grid; grid-template-columns:230px 1fr; gap:26px; }
+  .dlg .ph { width:100%; aspect-ratio:744/1039; border-radius:10px; background:var(--panel2); }
+  .dlg img { width:100%; border-radius:10px; display:block; box-shadow:0 10px 30px rgba(0,0,0,.5); }
+  .dlg .eyebrow { color:var(--gold); font-size:11px; letter-spacing:.2em; text-transform:uppercase; font-weight:600; margin-top:8px; }
+  .dlg h2 { font:600 28px/1.2 "Source Serif 4",Georgia,serif; margin:8px 0 12px; padding-right:90px; }
+  .dlg .tl { color:var(--muted); margin-bottom:12px; }
+  .stats-row { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
+  .chip { display:inline-flex; align-items:center; gap:5px; font-size:12px; padding:3px 9px; border-radius:20px; border:1px solid var(--line2); background:var(--panel2); }
+  .rules { color:#c9d0d7; font-size:13.5px; line-height:1.6; margin-bottom:14px; }
+  .rules p { margin:0 0 6px; }
+  .kw { display:inline-block; font-size:11px; font-weight:700; letter-spacing:.02em; text-transform:uppercase; padding:0 6px; border-radius:4px; background:#2b3440; color:#e6eaee; line-height:18px; vertical-align:1px; }
+  .en { display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; border-radius:50%; background:#e9edf1; color:#0b0f14; font-size:11px; font-weight:700; vertical-align:-3px; }
+  .ico { display:inline-block; font-size:12px; font-weight:700; vertical-align:-1px; }
+  .rune { display:inline-block; width:12px; height:12px; border-radius:50%; vertical-align:-1px; }
+  .flav { font-style:italic; color:var(--muted); font-size:13px; margin-bottom:14px; }
+  .breakdown { font-size:13px; color:var(--muted); }
+  .total { font-size:17px; font-weight:700; margin:10px 0 12px; }
+  .close { position:absolute; top:20px; right:20px; }
+  .cmline { font-size:12px; color:var(--dim); margin-top:10px; line-height:1.5; }
+  a.btn { text-decoration:none; color:var(--ink); height:40px; font-size:13px; }
+  footer { margin-top:28px; color:var(--dim); font-size:12px; }
+  @media (max-width:860px) {
+    .stats { grid-template-columns:repeat(2,1fr); }
+    .controls { grid-template-columns:1fr 1fr; }
+    .controls input { grid-column:1 / -1; }
+    .dlg { grid-template-columns:1fr; }
+    .dlg img { max-width:260px; margin:0 auto; }
+    header h1 { font-size:30px; }
+    header .gem { display:none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="gem"></div>
+    <div class="eyebrow" id="setName">Riftbound · Vendetta</div>
+    <h1>Riftbound gyűjtemény</h1>
+    <p>A gyűjteményed egy helyen. Keresd meg a lapjaidat, nézd át a példányaidat, és kövesd a Cardmarket-értéküket.</p>
+    <div class="src" id="sub"></div>
+  </header>
+
+  <section class="stats" id="stats"></section>
+
+  <div class="controls">
+    <input type="search" id="q" placeholder="Keresés név, kód vagy kártyaszöveg alapján…">
+    <select id="finish">
+      <option value="">Minden kivitel</option>
+      <option value="normal">Van normál</option>
+      <option value="foil">Van foil</option>
+      <option value="all">Teljes szett (hiányzók is)</option>
+    </select>
+    <select id="domain"><option value="">Minden domain</option></select>
+    <select id="rarity"><option value="">Minden ritkaság</option></select>
+    <select id="sort">
+      <option value="num">Kártyaszám szerint</option>
+      <option value="name">Név szerint</option>
+      <option value="value">Összérték szerint</option>
+      <option value="pN">Normál ár szerint</option>
+      <option value="pF">Foil ár szerint</option>
+      <option value="total">Darabszám szerint</option>
+      <option value="rarity">Ritkaság szerint</option>
+    </select>
+  </div>
+
+  <div class="bar">
+    <span class="summary" id="summary"></span>
+    <span class="note" id="colInfo"></span>
+    <label class="btn" for="upload" title="RiftBuddy JSON export betöltése (csak ebben a böngészőben)">⤒ Export betöltése</label>
+    <input type="file" id="upload" accept=".json,application/json" hidden>
+    <button class="btn" id="resetCol" hidden>Eredeti gyűjtemény</button>
+    <button class="btn" id="csv">CSV másolása</button>
+    <button class="btn on" id="viewList">☷ Lista</button>
+    <button class="btn" id="viewGrid">▦ Képek</button>
+  </div>
+
+  <div id="results"></div>
+
+  <footer id="foot"></footer>
+</div>
+
+<dialog id="dlg"></dialog>
+
+<script src="data.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const eur = v => v == null ? '–' : v.toLocaleString('hu-HU', {style:'currency', currency:'EUR', minimumFractionDigits:2});
+const esc = s => String(s).replace(/[&<>"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
+const RARITY_ORDER = {Common:0, Uncommon:1, Rare:2, Epic:3, Showcase:4};
+const DOMAIN_COLOR = {Fury:'var(--fury)', Calm:'var(--calm)', Mind:'var(--mind)', Body:'var(--body)', Chaos:'var(--chaos)', Order:'var(--order)'};
+const code = c => 'VEN-' + c.num.toUpperCase();
+
+// ---- gyűjtemény (eredeti vagy feltöltött) ----
+const BASE = Object.fromEntries(CARDS.map(c => [c.id, {normal: c.normal, foil: c.foil}]));
+const LS_KEY = 'riftbound-collection-upload', VIEW_KEY = 'riftbound-view';
+let cards = [], currentCol = BASE;
+function build(col) {
+  cards = CARDS.map(c => {
+    const own = col[c.id] || {};
+    const normal = own.normal || 0, foil = own.foil || 0;
+    const pN = c.cm ? c.cm.trend : null, pF = c.cm ? c.cm.trendFoil : null;
+    return {...c, normal, foil, total: normal + foil, pN, pF, value: normal * (pN || 0) + foil * (pF || 0),
+      hay: [c.id, code(c), c.num, c.name, c.type, c.rarity, ...c.domain, ...c.tags, c.text].join(' ').toLowerCase()};
+  });
+}
+function applyCollection(col, label, save) {
+  currentCol = col;
+  const known = new Set(CARDS.map(c => c.id));
+  const unknown = Object.keys(col).filter(k => !known.has(k) && ((col[k].normal || 0) + (col[k].foil || 0)) > 0);
+  build(col);
+  $('colInfo').textContent = label + (unknown.length ? ` · ${unknown.length} nem Vendetta lap kihagyva` : '');
+  $('resetCol').hidden = !save;
+  if (save) { try { localStorage.setItem(LS_KEY, JSON.stringify({label, col})); } catch (e) {} }
+  render();
+}
+function loadFile(file) {
+  file.text().then(t => {
+    const col = JSON.parse(t);
+    if (!col || typeof col !== 'object' || Array.isArray(col)) throw new Error('nem RiftBuddy export');
+    applyCollection(col, `Betöltve: ${file.name}`, true);
+  }).catch(e => { $('colInfo').textContent = 'Nem sikerült beolvasni: ' + e.message; });
+}
+
+// ---- kártyaszöveg ikonokkal ----
+function rulesHtml(rich) {
+  let h = String(rich).replace(/</g, '&lt;');
+  h = h.replace(/\[&gt;\]/g, '<span class="ico">→</span>');
+  h = h.replace(/\[([^\]\n]{1,40})\]/g, '<span class="kw">$1</span>');
+  h = h.replace(/:rb_energy_(\d+):/g, '<span class="en" title="Energia">$1</span>');
+  h = h.replace(/:rb_might:/g, '<span class="ico" title="Might">⚔</span>');
+  h = h.replace(/:rb_exhaust:/g, '<span class="ico" title="Exhaust">⟳</span>');
+  h = h.replace(/:rb_rune_rainbow:/g, '<span class="rune" title="Bármely rúna" style="background:conic-gradient(var(--fury),var(--order),var(--calm),var(--mind),var(--chaos),var(--body),var(--fury))"></span>');
+  h = h.replace(/:rb_rune_([a-z]+):/g, (m, d) => { const n = d[0].toUpperCase() + d.slice(1); return `<span class="rune" title="${n} rúna" style="background:${DOMAIN_COLOR[n] || '#888'}"></span>`; });
+  return h.split('\n').map(l => `<p>${l}</p>`).join('');
+}
+const domainHtml = c => c.domain.map(d => `<span class="rune" style="background:${DOMAIN_COLOR[d]}"></span> ${d}`).join(' · ');
+const img = (c, cls = '') => `<img loading="lazy" src="${esc(c.img)}" alt="${esc(c.name)}" class="${cls}" onerror="this.outerHTML='<div class=&quot;ph&quot;></div>'">`;
+
+// ---- szűrés, rendezés ----
+fill($('rarity'), [...new Set(CARDS.map(c => c.rarity))].sort((a, b) => (RARITY_ORDER[a] ?? 9) - (RARITY_ORDER[b] ?? 9)));
+fill($('domain'), [...new Set(CARDS.flatMap(c => c.domain))].sort());
+function fill(sel, vals) { vals.forEach(v => sel.add(new Option(v, v))); }
+
+let sortK = 'num', sortDir = 1, view = 'list';
+try { view = localStorage.getItem(VIEW_KEY) || 'list'; } catch (e) {}
+const DESC_FIRST = ['value', 'pN', 'pF', 'normal', 'foil', 'total'];
+$('sort').addEventListener('input', () => { sortK = $('sort').value; sortDir = DESC_FIRST.includes(sortK) ? -1 : 1; render(); });
+['q', 'finish', 'domain', 'rarity'].forEach(id => $(id).addEventListener('input', render));
+
+function filtered() {
+  const terms = $('q').value.toLowerCase().split(/\s+/).filter(Boolean);
+  const f = $('finish').value, r = $('rarity').value, d = $('domain').value;
+  return cards.filter(c =>
+    (f === 'all' || c.total > 0) && (f !== 'normal' || c.normal) && (f !== 'foil' || c.foil) &&
+    (!r || c.rarity === r) && (!d || c.domain.includes(d)) && terms.every(w => c.hay.includes(w)));
+}
+function cmp(a, b) {
+  let x = a[sortK], y = b[sortK];
+  if (sortK === 'rarity') { x = RARITY_ORDER[x] ?? 9; y = RARITY_ORDER[y] ?? 9; }
+  if (sortK === 'num') { x = a.id; y = b.id; }
+  if (sortK === 'name') return a.name.localeCompare(b.name) * sortDir;
+  if (x == null) x = -Infinity; if (y == null) y = -Infinity;
+  return (x > y ? 1 : x < y ? -1 : 0) * sortDir || a.id.localeCompare(b.id);
+}
+
+// ---- megjelenítés ----
+let shown = [];
+function render() {
+  if (!cards.length) return;
+  shown = filtered().sort(cmp);
+  const owned = cards.filter(c => c.total);
+  const sum = (arr, f) => arr.reduce((s, c) => s + f(c), 0);
+  $('stats').innerHTML = [
+    [sum(owned, c => c.total), 'Összes példány'],
+    [owned.length, 'Különböző lap'],
+    [`${sum(owned, c => c.normal)} / ${sum(owned, c => c.foil)}`, 'Normál / foil példány'],
+    [eur(sum(owned, c => c.value)), 'Cardmarket trendérték · teljes gyűjtemény', 'gold'],
+  ].map(([v, l, cls]) => `<div class="stat ${cls || ''}"><b>${v}</b><span>${l}</span></div>`).join('');
+  $('summary').textContent = `${shown.length} lap · ${sum(shown, c => c.total)} példány · ${eur(sum(shown, c => c.value))} a találatokban`;
+  $('viewList').classList.toggle('on', view === 'list');
+  $('viewGrid').classList.toggle('on', view === 'grid');
+
+  if (!shown.length) { $('results').innerHTML = '<p class="note">Nincs találat.</p>'; return; }
+  if (view === 'grid') {
+    $('results').innerHTML = `<div class="grid">${shown.map((c, i) => `
+      <div class="tile ${c.total ? '' : 'notowned'}" data-i="${i}" tabindex="0">
+        ${img(c)}
+        <div class="qty">${c.normal ? `<span class="pill">${c.normal}×</span>` : ''}${c.foil ? `<span class="pill f">${c.foil}× foil</span>` : ''}</div>
+        <div class="n" title="${esc(c.name)}">${esc(c.name)}</div>
+        <div class="m"><span>${code(c)} · ${c.rarity}</span><b style="color:var(--ink)">${c.value ? eur(c.value) : ''}</b></div>
+      </div>`).join('')}</div>`;
+  } else {
+    const cols = [['num','Lap / azonosító'],['normal','Normál db'],['foil','Foil db'],['total','Összes db'],['pN','Normál ár'],['pF','Foil ár'],['value','Összérték'],[null,'Piac']];
+    $('results').innerHTML = `<div class="tablewrap"><table><thead><tr>${cols.map(([k, l]) =>
+      `<th ${k ? `data-k="${k}"` : ''} class="${k === sortK ? 'sorted' : ''}">${l}${k === sortK ? (sortDir > 0 ? ' ▲' : ' ▼') : ''}</th>`).join('')}</tr></thead><tbody>
+      ${shown.map((c, i) => `<tr class="${c.total ? '' : 'notowned'}" data-i="${i}">
+        <td><div class="cardcell">${img(c)}<div><div class="n">${esc(c.name)}</div><div class="m">${code(c)} · ${c.rarity}</div></div></div></td>
+        <td class="${c.normal ? '' : 'zero'}">${c.normal}</td>
+        <td class="foilc">${c.foil}</td>
+        <td>${c.total}</td>
+        <td>${eur(c.pN)}</td>
+        <td class="foilc">${eur(c.pF)}</td>
+        <td>${eur(c.value)}</td>
+        <td>${cmLink(c) ? `<a class="mk" href="${cmLink(c)}" target="_blank" rel="noopener" title="Megnyitás a Cardmarketen">↗</a>` : '<span class="zero">–</span>'}</td>
+      </tr>`).join('')}</tbody></table></div>`;
+    document.querySelectorAll('th[data-k]').forEach(th => th.onclick = () => {
+      const k = th.dataset.k;
+      if (sortK === k) sortDir = -sortDir; else { sortK = k; sortDir = DESC_FIRST.includes(k) ? -1 : 1; }
+      if ([...$('sort').options].some(o => o.value === sortK)) $('sort').value = sortK;
+      render();
+    });
+  }
+}
+const cmLink = c => c.cm ? `https://www.cardmarket.com/en/Riftbound/Products/Search?searchString=${encodeURIComponent(c.cm.name)}` : null;
+
+function openCard(c) {
+  const stats = [
+    c.energy != null && `<span class="chip"><span class="en">${c.energy}</span> Energia</span>`,
+    c.might != null && `<span class="chip">⚔ ${c.might} Might</span>`,
+    c.power != null && `<span class="chip">${c.power} Power</span>`,
+  ].filter(Boolean).join('');
+  $('dlg').innerHTML = `
+    <button class="btn close" id="dlgClose">Bezárás ×</button>
+    <div class="dlg">
+      <div>${img(c)}</div>
+      <div>
+        <div class="eyebrow">${code(c)} · ${esc(c.rarity)}</div>
+        <h2>${esc(c.name)}</h2>
+        <div class="tl">${esc(c.type)} · ${domainHtml(c)}${c.tags.length ? ` · ${c.tags.map(esc).join(', ')}` : ''}</div>
+        ${stats ? `<div class="stats-row">${stats}</div>` : ''}
+        ${c.rich ? `<div class="rules">${rulesHtml(c.rich)}</div>` : ''}
+        ${c.flavour ? `<div class="flav">${esc(c.flavour)}</div>` : ''}
+        <div class="breakdown">${c.normal} normál × ${eur(c.pN)}<br>${c.foil} foil × ${eur(c.pF)}</div>
+        <div class="total">${eur(c.value)} összérték</div>
+        ${cmLink(c) ? `<a class="btn" href="${cmLink(c)}" target="_blank" rel="noopener">Megnyitás a Cardmarketen ↗</a>` : ''}
+        <div class="cmline">${c.cm ? `Cardmarket-termék: ${c.cm.id}<br>${esc(c.cm.name)}` : 'Nincs Cardmarket-egyezés'}${c.cm && c.cm.low != null ? `<br>Legalacsonyabb ár: ${eur(c.cm.low)} · foil: ${eur(c.cm.lowFoil)}` : ''}${c.artist ? `<br>Illusztráció: ${esc(c.artist)}` : ''}</div>
+      </div>
+    </div>`;
+  $('dlgClose').onclick = () => $('dlg').close();
+  $('dlg').showModal();
+}
+$('results').addEventListener('click', e => {
+  if (e.target.closest('a')) return;
+  const el = e.target.closest('[data-i]');
+  if (el) openCard(shown[+el.dataset.i]);
+});
+$('results').addEventListener('keydown', e => {
+  const el = e.target.closest('[data-i]');
+  if (el && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); openCard(shown[+el.dataset.i]); }
+});
+$('dlg').addEventListener('click', e => { if (e.target === $('dlg')) $('dlg').close(); });
+
+const setView = v => { view = v; try { localStorage.setItem(VIEW_KEY, v); } catch (e) {} render(); };
+$('viewList').onclick = () => setView('list');
+$('viewGrid').onclick = () => setView('grid');
+
+$('csv').onclick = () => {
+  const rows = [['kód','név','ritkaság','normál','foil','CM trend normál','CM trend foil','érték','CM idProduct']]
+    .concat(shown.map(c => [code(c), c.name, c.rarity, c.normal, c.foil, c.pN ?? '', c.pF ?? '', c.value.toFixed(2), c.cm ? c.cm.id : '']));
+  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(';')).join('\n');
+  navigator.clipboard.writeText(csv).then(
+    () => { $('csv').textContent = 'Kimásolva ✓'; setTimeout(() => $('csv').textContent = 'CSV másolása', 1500); },
+    () => { $('csv').textContent = 'Másolás nem sikerült'; });
+};
+
+$('upload').addEventListener('change', e => { if (e.target.files[0]) loadFile(e.target.files[0]); e.target.value = ''; });
+$('resetCol').onclick = () => { try { localStorage.removeItem(LS_KEY); } catch (e) {} applyCollection(BASE, '', false); };
+addEventListener('dragover', e => e.preventDefault());
+addEventListener('drop', e => { e.preventDefault(); if (e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]); });
+
+function setSource(date, live) {
+  $('sub').textContent = `Árak: Cardmarket Price Guide, ${String(date).slice(0, 10)} · kártyaadatok: Riftcodex`;
+}
+setSource(META.priceGuideDate, false);  // a data.js-t a GitHub Action naponta újragenerálja
+$('setName').textContent = 'Riftbound · ' + META.set;
+$('foot').textContent = 'Összérték = normál db × normál trendár + foil db × foil trendár. Trendár hiányában 30/7 napos átlag vagy a legalacsonyabb ár szerepel. Az árak naponta automatikusan frissülnek. A betöltött export csak ebben a böngészőben látszik.';
+
+
+
+let saved = null;
+try { saved = JSON.parse(localStorage.getItem(LS_KEY)); } catch (e) {}
+if (saved && saved.col) applyCollection(saved.col, saved.label + ' (ebben a böngészőben)', true);
+else applyCollection(BASE, '', false);
+</script>
+</body>
+</html>
